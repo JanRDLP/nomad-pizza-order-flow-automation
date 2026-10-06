@@ -52,10 +52,14 @@ Ingredient combinations are parametrized and may produce many test cases in a ru
 
 ## Project structure
 
+The public interface requirements and the NO-001–NO-023 test case catalog are documented in English in the files below.
+
 ```text
 public-order-flow/
 ├── conftest.py
 ├── data.py
+├── NOMAD-PUBLIC-REQ-DOC-001.docx
+├── casos_prueba_nomad_pizza.xlsx
 ├── page_objects/
 │   ├── base_page.py
 │   ├── cart_page.py
