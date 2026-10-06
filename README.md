@@ -1,28 +1,28 @@
-# Nomad Pizza: automatización del flujo público de pedidos
+# Nomad Pizza: Public Order Flow Automation
 
-Proyecto de pruebas de interfaz para el recorrido público de compra de Nomad Pizza. Usa **Python, pytest y Selenium** con Page Objects y datos parametrizados para validar menú y carrito.
+UI automation for Nomad Pizza's public ordering journey. It uses **Python, pytest, and Selenium**, with the Page Object Model and parametrized test data to validate the menu, cart, and public order information.
 
-Este paquete contiene únicamente pruebas y Page Objects de la experiencia pública. No incluye el código de la aplicación, la interfaz administrativa, pruebas de administración, credenciales, `.env` ni integraciones de limpieza para Firestore.
+This repository contains only tests and Page Objects for the public customer experience. Admin interface automation is maintained separately and is not included here for confidentiality. The application source code, credentials, `.env` files, and Firestore cleanup integrations are also excluded.
 
-## Alcance
+## Scope
 
-- **Menú:** visibilidad y nombre de productos, contadores, tipo de consumo, precios y promoción de Pizza Dog.
-- **Pizzas personalizables:** disponibilidad de ingredientes entre selectores, combinaciones y precio según los ingredientes elegidos.
-- **Carrito:** cantidades, subtotales y total del pedido; confirmación al disminuir de uno a cero; consistencia de datos del producto; acciones de eliminar y volver; datos bancarios al elegir transferencia.
-- **Información del pedido público:** resumen, identificador, cliente, método de pago, total, productos, enlace del ticket/QR, botón para volver al menú y datos de transferencia/WhatsApp.
+- **Menu:** product visibility and names, quantity counters, order type, prices, and the Pizza Dog promotion.
+- **Customizable pizzas:** ingredient availability across selectors, ingredient combinations, and price calculations based on the selected ingredients.
+- **Cart:** quantities, line subtotals and order total; confirmation when decreasing a quantity from one to zero; product details; remove and back actions; and bank details when bank transfer is selected.
+- **Public order information:** order summary, order ID, customer, payment method, total, products, ticket/QR link, return-to-menu action, and bank transfer/WhatsApp details.
 
-Las pruebas de menú y carrito se detienen antes de confirmar. Las dos pruebas de información sí completan una compra de prueba para llegar al resumen y por eso están protegidas para ejecutarse únicamente en Firebase Hosting Emulator local (puerto 5000). Los pedidos permanecen en Firestore Emulator; no se borran automáticamente. No se incluye la prueba del aviso de pedido nuevo, que pertenece a la experiencia administrativa.
+Menu and cart tests stop before submitting an order. The two order information tests create a test order to reach the summary, so they are restricted to the local Firebase Hosting Emulator (port 5000). Orders remain in the Firestore Emulator and are not deleted automatically. The new-order notification test is not included because it belongs to the admin experience.
 
-## Requisitos
+## Requirements
 
-- Python 3.10 o posterior.
+- Python 3.10 or later.
 - Google Chrome.
-- Una URL accesible de la aplicación pública. Por defecto se usa Firebase Hosting Emulator en `http://127.0.0.1:5000/`.
-- Para `test_info.py`, Firebase Auth y Firestore Emulator deben estar disponibles además de Hosting Emulator.
+- An accessible URL for the public application. By default, the tests use Firebase Hosting Emulator at `http://127.0.0.1:5000/`.
+- For `test_info.py`, Firebase Auth and Firestore Emulator must also be running, in addition to Hosting Emulator.
 
-## Instalación y ejecución
+## Installation and usage
 
-Desde la carpeta de este proyecto:
+From this project directory:
 
 ```powershell
 python -m venv .venv
@@ -30,27 +30,27 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-Si ejecutarás las pruebas contra otra URL pública, configura la variable para la terminal actual:
+To run the tests against a different public URL, set this environment variable for the current terminal session:
 
 ```powershell
-$env:NOMAD_PUBLIC_URL = "https://tu-sitio-publico.example/"
+$env:NOMAD_PUBLIC_URL = "https://your-public-site.example/"
 ```
 
-Ejecuta el flujo público:
+Run the public menu and cart tests:
 
 ```powershell
 python -m pytest tests/test_menu.py tests/test_cart.py -v
 ```
 
-Las pruebas de información confirman pedidos locales. Ejecútalas solo con Firebase Emulators en marcha:
+The order information tests submit local test orders. Run them only while Firebase Emulators are running:
 
 ```powershell
 python -m pytest tests/test_info.py -v
 ```
 
-Las combinaciones de ingredientes son parametrizadas y pueden generar numerosos casos en la ejecución.
+Ingredient combinations are parametrized and may produce many test cases in a run.
 
-## Estructura
+## Project structure
 
 ```text
 public-order-flow/
@@ -70,24 +70,3 @@ public-order-flow/
 ├── requirements.txt
 └── README.md
 ```
-
-## Publicarlo en GitHub
-
-Inicializa Git **dentro de esta carpeta `public-order-flow`**, para que el repositorio contenga solo este paquete y no la suite administrativa ni los archivos privados del proyecto completo. Antes de publicar, revisa los archivos que se agregarán:
-
-```powershell
-git init
-git add .
-git status --short
-```
-
-Confirma que el listado solo incluya los archivos descritos en la estructura anterior. Después crea el commit y agrega el remoto de tu nuevo repositorio:
-
-```powershell
-git commit -m "Public order flow automation"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
-git push -u origin main
-```
-
-No inicialices Git en la carpeta padre `test-nomad-pizza` para este repositorio público: ahí permanece la suite completa, incluidas las pruebas y Page Objects de administración.
