@@ -50,16 +50,33 @@ python -m pytest tests/test_info.py -v
 
 Ingredient combinations are parametrized and may produce many test cases in a run.
 
+## Test Results and Defect Reports
+
+The reports below document findings from earlier test executions. They are kept for traceability and do not necessarily represent current failures; rerun the related cases to confirm their status. The public reports include the observed behavior and test context without requiring access to Jira.
+
+| Jira issue | Test case | Finding |
+| --- | --- | --- |
+| [NP-1](docs/defects/NP-1.md) | NO-007 | Pizza Dog takeout promotion and price synchronization |
+| [NP-2](docs/defects/NP-2.md) | NO-014 | Test data description differs from the menu/cart description |
+| [NP-3](docs/defects/NP-3.md) | NO-014 | Order-type label capitalization caused an exact-match assertion failure |
+
+NO-014 is linked to both NP-2 and NP-3 because the reports describe separate observations from the same cart test case.
+
 ## Project structure
 
-The public interface requirements and the NO-001–NO-023 test case catalog are documented in English in the files below.
+The NO-001–NO-023 test case catalog and the public defect reports are documented in English in the files below.
 
 ```text
 public-order-flow/
 ├── conftest.py
 ├── data.py
-├── NOMAD-PUBLIC-REQ-DOC-001.docx
 ├── casos_prueba_nomad_pizza.xlsx
+├── docs/
+│   └── defects/
+│       ├── NP-1.md
+│       ├── NP-2.md
+│       ├── NP-3.md
+│       └── README.md
 ├── page_objects/
 │   ├── base_page.py
 │   ├── cart_page.py
