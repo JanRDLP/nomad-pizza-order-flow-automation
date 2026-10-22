@@ -2,7 +2,7 @@
 
 UI automation for Nomad Pizza's public ordering journey. It uses **Python, pytest, and Selenium**, with the Page Object Model and parametrized test data to validate the menu, cart, and public order information.
 
-This repository contains only tests and Page Objects for the public customer experience. Admin interface automation is maintained separately and is not included here for confidentiality. The application source code, credentials, `.env` files, and Firestore cleanup integrations are also excluded.
+This repository and the entire `public-order-flow/` folder are dedicated to the public customer interface. Its tests open the customer menu at the site root (`/`) and cover the menu, cart, and public order information. They must never open `/admin.html`; Admin interface automation is maintained separately and is not included here for confidentiality. The application source code, credentials, `.env` files, and Firestore cleanup integrations are also excluded.
 
 ## Scope
 
@@ -19,6 +19,14 @@ Menu and cart tests stop before submitting an order. The two order information t
 - Google Chrome.
 - An accessible URL for the public application. By default, the tests use Firebase Hosting Emulator at `http://127.0.0.1:5000/`.
 - For `test_info.py`, Firebase Auth and Firestore Emulator must also be running, in addition to Hosting Emulator.
+
+For the local end-to-end order tests, configure `NOMAD_PUBLIC_URL` as the customer-facing root URL:
+
+```text
+NOMAD_PUBLIC_URL=http://127.0.0.1:5000/
+```
+
+Do not set it to `http://127.0.0.1:5000/admin.html` or use `NOMAD_ADMIN_URL` in this project. The public browser fixture and order-information tests reject non-root paths so a misconfigured run cannot silently test the Admin interface.
 
 ## Installation and usage
 

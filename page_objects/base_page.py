@@ -2,7 +2,6 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 
-
 class BasePage:
     """Comportamiento Selenium compartido por las páginas."""
 

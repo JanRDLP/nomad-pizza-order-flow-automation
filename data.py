@@ -122,18 +122,6 @@ class Products:
         },
     }
 
-
-    class OrderInfoCases:
-        """Datos del pedido mínimo que se confirma para validar su información."""
-
-        CUSTOMER = "QA Flujo Público"
-        PRODUCT_ID = "7up"
-        QUANTITY = 1
-        CONSUME_TYPE = "En sitio"
-        PAYMENT_METHOD = "Efectivo"
-        TRANSFER_PAYMENT_METHOD = "Transferencia"
-
-
     @classmethod
     def personalizable_ids(cls):
         """Devuelve los productos que permiten elegir ingredientes adicionales."""
@@ -143,5 +131,12 @@ class Products:
             if product.get("tipo") == "pizza_personalizable"
         ]
 
+class OrderInfoCases:
+    """Datos del pedido mínimo que se confirma para validar su información."""
 
-
+    CUSTOMER = "QA Flujo Público"
+    PRODUCT_ID = "7up"
+    QUANTITY = 1
+    CONSUME_TYPE = "En sitio"
+    PAYMENT_METHOD = "Efectivo"
+    TRANSFER_PAYMENT_METHOD = "Transferencia"

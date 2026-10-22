@@ -48,6 +48,28 @@ class OrderInfoPage(BasePage):
         """Lee el destino del enlace del código QR del ticket."""
         return self.visible(self.QR_LINK).get_attribute("href")
 
+    def qr_is_rendered(self):
+        """Espera a que el canvas del QR tenga dimensiones y módulos visibles."""
+        return self.wait.until(
+            lambda driver: driver.execute_script(
+                """
+                const canvas = document.getElementById(arguments[0]);
+                if (!canvas || canvas.width < 1 || canvas.height < 1) return false;
+                const context = canvas.getContext('2d');
+                if (!context) return false;
+                const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+                let darkPixels = 0;
+                for (let index = 0; index < pixels.length; index += 16) {
+                  if (pixels[index] < 80 && pixels[index + 1] < 80 && pixels[index + 2] < 80) {
+                    darkPixels += 1;
+                  }
+                }
+                return darkPixels > 50;
+                """,
+                self.QR_CANVAS[1],
+            )
+        )
+
     def whatsapp_url(self):
         """Lee el destino de WhatsApp para enviar el comprobante de transferencia."""
         return self.visible(self.WHATSAPP_LINK).get_attribute("href")

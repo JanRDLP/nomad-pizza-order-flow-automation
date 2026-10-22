@@ -1,6 +1,6 @@
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 
-from data import Links, OrderInfoCases, Products
+from data import Links, Products, OrderInfoCases
 
 
 def _assert_hosting_emulator(page):
@@ -13,11 +13,14 @@ def _assert_hosting_emulator(page):
         and configured_url.hostname in local_hosts
         and current_url.port == 5000
         and configured_url.port == 5000
+        and current_url.path.rstrip("/") == ""
+        and configured_url.path.rstrip("/") == ""
         and (current_url.scheme, current_url.netloc)
         == (configured_url.scheme, configured_url.netloc)
     ), (
-        "Esta prueba confirma un pedido y solo debe ejecutarse contra Firebase "
-        f"Hosting Emulator en {Links.URL_PUBLIC}."
+        "Esta prueba confirma un pedido desde la interfaz pública de cliente y "
+        "solo debe ejecutarse en la raíz de Firebase Hosting Emulator "
+        f"(http://127.0.0.1:5000/), no en /admin.html. URL configurada: {Links.URL_PUBLIC}."
     )
 
 
@@ -40,13 +43,19 @@ def test_public_checkout_shows_order_information(menu_page, cart_page, order_inf
 
     expected_total = Products.ITEMS[OrderInfoCases.PRODUCT_ID]["precio_base"]
     order_id = order_info_page.order_id()
+    items_text = order_info_page.items_text()
     assert order_id
     assert order_info_page.customer() == OrderInfoCases.CUSTOMER
     assert order_info_page.payment_method() == OrderInfoCases.PAYMENT_METHOD
     assert order_info_page.total() == str(expected_total)
-    assert Products.ITEMS[OrderInfoCases.PRODUCT_ID]["nombre"] in order_info_page.items_text()
-    assert f"${expected_total}" in order_info_page.items_text()
-    assert order_id in order_info_page.ticket_url()
+    assert f"x{OrderInfoCases.QUANTITY}" in items_text
+    assert Products.ITEMS[OrderInfoCases.PRODUCT_ID]["nombre"] in items_text
+    assert Products.ITEMS[OrderInfoCases.PRODUCT_ID]["descripcion"] in items_text
+    assert OrderInfoCases.CONSUME_TYPE.upper() in items_text
+    assert f"${expected_total}" in items_text
+    expected_ticket_url = urljoin(Links.URL_PUBLIC, f"pedido/{order_id}")
+    assert order_info_page.ticket_url() == expected_ticket_url
+    assert order_info_page.qr_is_rendered(), "El canvas del QR debe contener el código del ticket."
     assert order_info_page.transfer_details() == ""
 
     order_info_page.click(order_info_page.BACK_TO_MENU)
@@ -63,6 +72,10 @@ def test_public_transfer_order_info_shows_bank_details_and_whatsapp(menu_page, c
     )
     order_info_page.wait_until_visible(order_info_page.SCREEN)
 
+    order_id = order_info_page.order_id()
+    expected_ticket_url = urljoin(Links.URL_PUBLIC, f"pedido/{order_id}")
+    assert order_info_page.ticket_url() == expected_ticket_url
+    assert order_info_page.qr_is_rendered(), "El canvas del QR debe contener el código del ticket."
     assert order_info_page.payment_method() == OrderInfoCases.TRANSFER_PAYMENT_METHOD
     transfer_details = order_info_page.transfer_details()
     assert "Datos para Transferencia" in transfer_details

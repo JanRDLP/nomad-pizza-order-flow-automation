@@ -1,5 +1,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import urlsplit
 
 import pytest
 from selenium import webdriver
@@ -48,8 +49,20 @@ def driver(browser_factory):
 
 @pytest.fixture
 def public_driver(driver):
-    """Abre el menú público configurado para el proyecto."""
+    """Abre el menú de cliente y evita ejecutar pruebas en admin.html."""
+    configured_url = urlsplit(Links.URL_PUBLIC)
+    assert configured_url.path.rstrip("/") == "", (
+        "La suite public-order-flow solo debe abrir la interfaz de cliente. "
+        "Configura NOMAD_PUBLIC_URL como http://127.0.0.1:5000/; "
+        f"el valor actual termina en {configured_url.path!r}."
+    )
+
     driver.get(Links.URL_PUBLIC)
+    current_url = urlsplit(driver.current_url)
+    assert current_url.path.rstrip("/") == "", (
+        "La URL configurada redirigió a una ruta que no es la interfaz pública: "
+        f"{driver.current_url}. Revisa NOMAD_PUBLIC_URL."
+    )
     return driver
 
 
